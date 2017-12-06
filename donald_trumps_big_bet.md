@@ -562,7 +562,8 @@ voter_turnout_most %>%
     data = state_geo,
     inherit.aes = FALSE
   ) +
-  coord_sf(crs = st_crs(state_geo), datum = NA) + 
+  coord_sf(crs = US_ALBERS, datum = NA) + 
+  # coord_sf(crs = st_crs(state_geo), datum = NA) + 
   scale_fill_manual(
     values = NYT_MAP_COLOR,
     labels = NYT_MAP_LABEL
