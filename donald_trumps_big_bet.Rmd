@@ -1,82 +1,82 @@
-NYT Recreation - Donald Trump's Big Bet on Less Educated
-================
-Christopher Oh
-2017-08-28
+---
+title: "NYT Recreation - Donald Trump's Big Bet on Less Educated"
+author: "Christopher Oh"
+date: 2017-08-28
+output:
+  github_document:
+    toc: true
+    toc_depth: 6
+---
 
--   [Motivation](#motivation)
--   [Challenges](#challenges)
--   [Packages, parameters, functions](#packages-parameters-functions)
--   [Datasets](#datasets)
--   [2012 CPS november data processing](#cps-november-data-processing)
--   [Aggregate voter turnout information](#aggregate-voter-turnout-information)
--   [Geo-visualization of the largest voter group by county](#geo-visualization-of-the-largest-voter-group-by-county)
-    -   [Turnout rates calculation by race / education groups](#turnout-rates-calculation-by-race-education-groups)
-    -   [Voting-age population calculations](#voting-age-population-calculations)
-    -   [Visualization of the lagest voter group by county](#visualization-of-the-lagest-voter-group-by-county)
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, dpi = 400, out.width = "100%")
+```
 
-Motivation
-----------
+## Motivation
 
-The goal is to produce one of the best visualizations on the 2016 presidential election prediction.
+The goal is to produce one of the best visualizations on the 2016 presidential
+election prediction.
 
-Leveraging the power of the `tidyverse` and `sf` packages, I was able to come close to getting the plot to match the original plot.
+Leveraging the power of the `tidyverse` and `sf` packages, I was able to come
+close to getting the plot to match the original plot.
 
-Challenges
-----------
+## Challenges
 
 The two biggest hurdles to the project were (not in order):
 
-1.  Obtaining the right datasets
-2.  Tracing the steps the author took
+1. Obtaining the right datasets
+2. Tracing the steps the author took
 
-The article provided minimal guidance regarding both aspects, so a lot of time was spent on
+The article provided minimal guidance regarding both aspects, so a lot of time 
+was spent on
 
--   Rummaging through the internet for the sources
--   Numerous trials and errors in calculating the metrics in each step of the way
++ Rummaging through the internet for the sources
++ Numerous trials and errors in calculating the metrics in each step of the
+way
 
-Because there was no way to verify whether either **1.** or **2.** was conducted correctly, it left me with no choice to but proceed with the best guesses (and efforts).
+Because there was no way to verify whether either __1.__ or __2.__ was
+conducted correctly, it left me with no choice to but proceed with the best
+guesses (and efforts).
 
-Below two sections of the article did provide me with some leads to get started on the process:
+Below two sections of the article did provide me with some leads to get started
+on the process:
 
-"Sources: Current Population Survey, 2012, Minnesota Population Center, University of Minnesota; Census Bureau American Community Survey; exit polls from Edison/Mitofsky, Voter News Services, Voter Research and Surveys, and The New York Times and CBS News" - Ford Fessenden, NYTimes [1]
+"Sources: Current Population Survey, 2012, Minnesota Population Center, University of Minnesota; Census Bureau American Community Survey; exit polls from Edison/Mitofsky, Voter News Services, Voter Research and Surveys, and The New York Times and CBS News" - Ford Fessenden, NYTimes [^1]
 
-"White educational-attainment populations calculated based on proportions in the over-25 population applied to voting-age population. Turnout is calculated for each of seven race-education groups (white, no college; white, some college; white, college degree; Hispanic; black; Asian-American; and other) at the state level, and applied to county voting-age population." - Ford Fessenden, NYTimes [2].
+"White educational-attainment populations calculated based on proportions in the over-25 population applied to voting-age population. Turnout is calculated for each of seven race-education groups (white, no college; white, some college; white, college degree; Hispanic; black; Asian-American; and other) at the state level, and applied to county voting-age population." - Ford Fessenden, NYTimes [^1]. 
 
-Packages, parameters, functions
--------------------------------
+```{r, include=FALSE}
+# File paths
+
+# 2012 CPS November survey data that contains the voting turnout rate information
+path_cps_nov <- "C:/Users/logicalfellac/Downloads/cps_00003.dat/cps_00003_1.csv"
+
+# Voting age population data broken down by race
+path_voting_age <- "C:/Users/logicalfellac/Downloads/Spring2017/C01/County.csv"
+
+# White (not hispanic) population over 25 divided by educational attainment
+path_white_edu <- "C:/Users/logicalfellac/Downloads/Spring2017/C01/ACS_15_5YR_C15002H_with_ann.csv"
+
+# Geodata
+path_county_geo <- "C:/Users/logicalfellac/Downloads/Spring2017/C01/cb_2015_us_county_20m_sf.rds" 
+path_state_geo <- "C:/Users/logicalfellac/Downloads/Spring2017/C01/cb_2015_us_state_20m_sf.rds"
+```
+
+## Packages, parameters, functions
 
 Pacakges used
 
-``` r
+```{r}
 library(tidyverse)
-```
-
-    ## -- Attaching packages ----------------------------------------------------------------------- tidyverse 1.2.1 --
-
-    ## √ ggplot2 2.2.1.9000     √ purrr   0.2.4     
-    ## √ tibble  1.3.4          √ dplyr   0.7.4     
-    ## √ tidyr   0.7.2          √ stringr 1.2.0     
-    ## √ readr   1.1.1          √ forcats 0.2.0
-
-    ## -- Conflicts -------------------------------------------------------------------------- tidyverse_conflicts() --
-    ## x dplyr::filter() masks stats::filter()
-    ## x dplyr::lag()    masks stats::lag()
-
-``` r
 library(stringr)
 library(purrr)
 library(sf)
-```
-
-    ## Linking to GEOS 3.6.1, GDAL 2.2.0, proj.4 4.9.3
-
-``` r
 library(forcats)
 ```
 
 Below are the parameters & functions to be used.
 
-``` r
+```{r}
 # CRS for US Albers 
 US_ALBERS <-
   "+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=37.5 +lon_0=-96 +x_0=0 +y_0=0 +datum=WGS84 +no_defs"
@@ -155,18 +155,23 @@ collapse_rows <- function(df, removed, combined) {
 }
 ```
 
-Datasets
---------
+## Datasets
 
--   `county_geo`: County geometries\*
--   `state_geo`: State geometries\*
--   `cps_nov`: Variables extracted from Current Population Survey (CPS) and the November supplement containing voting information (both from year 2012) - queried from [IPUMS USA](https://usa.ipums.org/usa/)\*\*
--   `voting_age`: Voting age population data for each county in the U.S. from [US Census Bureau - Voting Age Population by Citizenship and Race](https://www.census.gov/rdo/data/voting_age_population_by_citizenship_and_race_cvap.html)
--   `white_edu`: County-level educational attainment data for 25 or older [American Community Survey (ACS) Educational Attainment Data - White Alone, Not Hispanic or Latino](https://factfinder.census.gov/faces/tableservices/jsf/pages/productview.xhtml?pid=ACS_16_1YR_C15002H&prodType=table)
++ `county_geo`: County geometries*
++ `state_geo`: State geometries*
++ `cps_nov`: Variables extracted from Current Population Survey (CPS) and the November 
+supplement containing voting information (both from year 2012) - queried from 
+[IPUMS USA](https://usa.ipums.org/usa/)**
++ `voting_age`: Voting age population data for each county in the U.S. from 
+[US Census Bureau - Voting Age Population by Citizenship and Race](https://www.census.gov/rdo/data/voting_age_population_by_citizenship_and_race_cvap.html)
++ `white_edu`: County-level educational attainment data for 25 or older 
+[American Community Survey (ACS) Educational Attainment Data - White Alone, Not Hispanic or Latino](https://factfinder.census.gov/faces/tableservices/jsf/pages/productview.xhtml?pid=ACS_16_1YR_C15002H&prodType=table)
 
-\*Alaska and Hawaii are excluded to avoid complications with geovisualization. \*\*The .csv file imported was processed from the raw format (.dat file) using the provided STATA .do file from IPUMS (slightly modified to keep the state FIPS).
+*Alaska and Hawaii are excluded to avoid complications with geovisualization.
+**The .csv file imported was processed from the raw format (.dat file) using the 
+provided STATA .do file from IPUMS (slightly modified to keep the state FIPS).
 
-``` r
+```{r, message=FALSE}
 # Geographical data
 county_geo <-
   read_rds(path_county_geo) %>% 
@@ -195,19 +200,24 @@ white_edu <-
   filter(!(county_fips %/% 1000) %in% c(2, 15))
 ```
 
-2012 CPS november data processing
----------------------------------
+## 2012 CPS november data processing
 
-Most of the processing here is on collapsing the character variables into the desired levels.
+Most of the processing here is on collapsing the character variables into the
+desired levels.
 
 Here are the steps:
 
-1.  The entries with invlaid voting record are removed.
-2.  `education` is collapsed into 3 levels: `no_college`, `some_college`, and `college`.
-3.  `hispanic` is collapsed down to 2 levels: `hispanic`, `not_hispanic`. 4.`race` is collpased down to 4 levels: `asian`, `black`, `other`, and `white`.
-4.  Add a new level on `race` for the hispanics and assign everyone into this category regardless of their existing `race` level (i.e. a person's `race` is `hispanic` if the variable `hispanic` is `hispanic`). This is because hispanic is assigned as one of the race groups in the analysis by NY Times.
+1. The entries with invlaid voting record are removed.
+2. `education` is collapsed into 3 levels: `no_college`, `some_college`, and
+`college`.
+3. `hispanic` is collapsed down to 2 levels: `hispanic`, `not_hispanic`.
+4.`race` is collpased down to 4 levels: `asian`, `black`, `other`, and `white`.
+5. Add a new level on `race` for the hispanics and assign everyone into this 
+category regardless of their existing `race` level (i.e. a person's `race` is
+`hispanic` if the variable `hispanic` is `hispanic`). This is because hispanic
+is assigned as one of the race groups in the analysis by NY Times.
 
-``` r
+```{r}
 cps_nov_clean <-
   cps_nov %>% 
   filter(
@@ -221,13 +231,13 @@ cps_nov_clean <-
         educ,
         no_college = c(
           "High school diploma or equivalent",
-          "Grades 5 or 6",              
-          "Grades 7 or 8",                  
+          "Grades 5 or 6",				
+          "Grades 7 or 8",					
           "Grade 11",
-          "Grade 9",                
-          "Grades 1, 2, 3, or 4",               
-          "None or preschool",              
-          "Grade 10",                               
+          "Grade 9",				
+          "Grades 1, 2, 3, or 4",				
+          "None or preschool",				
+          "Grade 10",								
           "12th grade, no diploma"
         ),
         some_college = c(
@@ -246,10 +256,10 @@ cps_nov_clean <-
       fct_collapse(
         hispan,
         hispanic = c(
-          "Mexican",            
-          "Central/South American",             
-          "Dominican",          
-          "Puerto Rican",               
+          "Mexican",			
+          "Central/South American",				
+          "Dominican",			
+          "Puerto Rican",				
           "Cuban"
         ),
         not_hispanic = c("Not Hispanic")
@@ -261,25 +271,25 @@ cps_nov_clean <-
         black = c("Black/Negro"),
         asian = c("Asian only"),
         other = c(
-          "American Indian/Aleut/Eskimo",               
-          "White-American Indian",              
-          "Black-American Indian",              
-          "White-Black",                
-          "American Indian-Hawaiian/Pacific Islander",              
-          "White-Asian",                
+          "American Indian/Aleut/Eskimo",				
+          "White-American Indian",				
+          "Black-American Indian",				
+          "White-Black",				
+          "American Indian-Hawaiian/Pacific Islander",				
+          "White-Asian",				
           "White-American Indian-Hawaiian/Pacific Islander",
-          "Hawaiian/Pacific Islander only",             
-          "White-Hawaiian/Pacific Islander",                
-          "Black-Asian",                
-          "White-Black-American Indian",                
-          "White-American Indian-Asian",                
-          "Asian-Hawaiian/Pacific Islander",            
-          "Four or five races, unspecified",                
-          "White-Asian-Hawaiian/Pacific Islander",              
-          "Black-Hawaiian/Pacific Islander",            
+          "Hawaiian/Pacific Islander only",				
+          "White-Hawaiian/Pacific Islander",				
+          "Black-Asian",				
+          "White-Black-American Indian",				
+          "White-American Indian-Asian",				
+          "Asian-Hawaiian/Pacific Islander",			
+          "Four or five races, unspecified",				
+          "White-Asian-Hawaiian/Pacific Islander",				
+          "Black-Hawaiian/Pacific Islander",			
           "White-Black-American Indian-Asian",
-          "White-Black-Asian",              
-          "American Indian-Asian",              
+          "White-Black-Asian",				
+          "American Indian-Asian",				
           "White-Black--Hawaiian/Pacific Islander"
         )
       ),
@@ -290,24 +300,23 @@ cps_nov_clean <-
   )
 ```
 
-Aggregate voter turnout information
------------------------------------
+## Aggregate voter turnout information
 
 Let's group the population into the following 7 race / education groups:
 
--   White, no college
--   White, some college
--   White, college degree (or higher)
--   Black
--   Hispanic
--   Other
++ White, no college
++ White, some college
++ White, college degree (or higher)
++ Black
++ Hispanic
++ Other
 
 Then, based on the weighted sums from the CPS survey data, we can estimate:
 
--   The total voting-eligible population for each race / education group.
--   The number of people who voted within each race / education group.
++ The total voting-eligible population for each race / education group.
++ The number of people who voted within each race / education group.
 
-``` r
+```{r}
 white_aggregate <-
   cps_nov_clean %>%
   group_by(educ_f, race_ff) %>%
@@ -353,9 +362,10 @@ total_pop <-
   rbind(other_races_agg)
 ```
 
-With all the aggregated voting-age population size & turnout size for each race / education group, we can replicate the third plot in the article.
+With all the aggregated voting-age population size & turnout size for each race 
+/ education group, we can replicate the third plot in the article.
 
-``` r
+```{r}
 total_pop %>% 
   left_join(tot_vote, by = "race_ff") %>% 
   collapse_rows("asian", "other") %>% 
@@ -397,22 +407,24 @@ total_pop %>%
   )
 ```
 
-<img src="donald_trumps_big_bet_files/figure-markdown_github/unnamed-chunk-7-1.png" width="100%" />
+Why this plot does not exactly match up with the one in the article is still a 
+mystery, but it is fairly close.
 
-Why this plot does not exactly match up with the one in the article is still a mystery, but it is fairly close.
+## Geo-visualization of the largest voter group by county
 
-Geo-visualization of the largest voter group by county
-------------------------------------------------------
-
-In this section, we finally delve into recreating the final map in the article that correctly predicted how Trump could possibly win the 2016 US presidential election.
+In this section, we finally delve into recreating the final map in the article
+that correctly predicted how Trump could possibly win the 2016 US presidential 
+election.
 
 The following subsections detail the process.
 
 ### Turnout rates calculation by race / education groups
 
-I calculate the state-level turnout rates based on the 7 race / education groups which then would be applied on each county's voting-age population to estimated the turnouts.
+I calculate the state-level turnout rates based on the 7 race / education groups
+which then would be applied on each county's voting-age population to estimated
+the turnouts.
 
-``` r
+```{r}
 white_only <-
   cps_nov_clean %>% 
   group_by(statefip, educ_f, race_ff) %>% 
@@ -445,12 +457,16 @@ educ_race_turnouts <-
 
 ### Voting-age population calculations
 
-1.  Since the original voting age population data is broken down just by race (`voting_age`), to get an approximate of the breakdown by education for the whites, a dataset that contains this information on population aged 25 or over was used (`white_edu`).
-2.  Use the state-wide turnout rates derived above to calculate the estimates of the county-level turnouts for each of the 7 groups.
-3.  The four minority race groups are aggregated into one.
-4.  In each county, the demographic with the highest turnout is selected.
+1. Since the original voting age population data is broken down just by race
+(`voting_age`), to get an approximate of the breakdown by education for the 
+whites, a dataset that contains this information on population aged 25 or over
+was used (`white_edu`).
+2. Use the state-wide turnout rates derived above to calculate the estimates of
+the county-level turnouts for each of the 7 groups.
+3. The four minority race groups are aggregated into one.
+4. In each county, the demographic with the highest turnout is selected.
 
-``` r
+```{r, warning=FALSE}
 voting_age <-
   voting_age %>% 
   select(GEONAME, LNTITLE, CVAP_EST, county_fips) %>% 
@@ -550,9 +566,11 @@ Recreation of the NY Times plot.
 
 In general, this map explains how Trump could win the election.
 
-The counties that are marked dark blue (where the primary voters are whites without college degree) tended to be the ones in which Trump won over other candidates.
+The counties that are marked dark blue (where the primary voters are whites 
+without college degree) tended to be the ones in which Trump won over other 
+candidates.
 
-``` r
+```{r}
 voter_turnout_most %>% 
   left_join(county_geo, by = "county_fips") %>% 
   ggplot() +
@@ -593,8 +611,4 @@ voter_turnout_most %>%
   )
 ```
 
-<img src="donald_trumps_big_bet_files/figure-markdown_github/unnamed-chunk-10-1.png" width="100%" />
-
-[1] Ford Fessenden. New York Times. [Donald Trump's Big Bet on Less Educated Whites](https://www.nytimes.com/interactive/2016/11/07/us/how-trump-can-win.html)
-
-[2] Ford Fessenden. New York Times. [Donald Trump's Big Bet on Less Educated Whites](https://www.nytimes.com/interactive/2016/11/07/us/how-trump-can-win.html)
+[^1]: Ford Fessenden. New York Times. [Donald Trump's Big Bet on Less Educated Whites](https://www.nytimes.com/interactive/2016/11/07/us/how-trump-can-win.html)
