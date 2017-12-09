@@ -34,7 +34,7 @@ The article provided minimal guidance regarding both aspects, so a lot of time w
 -   Rummaging through the internet for the sources
 -   Numerous trials and errors in calculating the metrics in each step of the way
 
-Because there was no way to verify whether either **1.** or **2.** was conducted correctly, it left me with no choice to but proceed with the best guesses (and efforts).
+Due to the difficulty of verifying whether either **1.** or **2.** was conducted correctly, I simply had to proceed with the best guesses (and efforts), in most intermediary steps, which would explain why the final output is not perfectly matched.
 
 Below two sections of the article did provide me with some leads to get started on the process:
 
@@ -164,7 +164,8 @@ Datasets
 -   `voting_age`: Voting age population data for each county in the U.S. from [US Census Bureau - Voting Age Population by Citizenship and Race](https://www.census.gov/rdo/data/voting_age_population_by_citizenship_and_race_cvap.html)
 -   `white_edu`: County-level educational attainment data for 25 or older [American Community Survey (ACS) Educational Attainment Data - White Alone, Not Hispanic or Latino](https://factfinder.census.gov/faces/tableservices/jsf/pages/productview.xhtml?pid=ACS_16_1YR_C15002H&prodType=table)
 
-\*Alaska and Hawaii are excluded to avoid complications with geovisualization. \*\*The .csv file imported was processed from the raw format (.dat file) using the provided STATA .do file from IPUMS (slightly modified to keep the state FIPS).
+\*Alaska and Hawaii are excluded to avoid complications with geovisualization.
+\*\*The .csv file imported was processed from the raw format (.dat file) using the provided STATA .do file from IPUMS (slightly modified to keep the state FIPS).
 
 ``` r
 # Geographical data

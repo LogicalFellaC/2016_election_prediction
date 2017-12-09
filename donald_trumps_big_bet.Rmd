@@ -34,9 +34,10 @@ was spent on
 + Numerous trials and errors in calculating the metrics in each step of the
 way
 
-Because there was no way to verify whether either __1.__ or __2.__ was
-conducted correctly, it left me with no choice to but proceed with the best
-guesses (and efforts).
+Due to the difficulty of verifying whether either __1.__ or __2.__ was
+conducted correctly, I simply had to  proceed with the best guesses (and 
+efforts), in most intermediary steps, which would explain why the final output
+is not perfectly matched.
 
 Below two sections of the article did provide me with some leads to get started
 on the process:
@@ -167,7 +168,7 @@ supplement containing voting information (both from year 2012) - queried from
 + `white_edu`: County-level educational attainment data for 25 or older 
 [American Community Survey (ACS) Educational Attainment Data - White Alone, Not Hispanic or Latino](https://factfinder.census.gov/faces/tableservices/jsf/pages/productview.xhtml?pid=ACS_16_1YR_C15002H&prodType=table)
 
-*Alaska and Hawaii are excluded to avoid complications with geovisualization.
+*Alaska and Hawaii are excluded to avoid complications with geovisualization.  
 **The .csv file imported was processed from the raw format (.dat file) using the 
 provided STATA .do file from IPUMS (slightly modified to keep the state FIPS).
 
