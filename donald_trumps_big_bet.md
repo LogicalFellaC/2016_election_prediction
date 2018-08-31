@@ -1,7 +1,7 @@
-NYT Recreation - Donald Trump's Big Bet on Less Educated
+Donald Trump's Big Bet on Less Educated - NY Times
 ================
 Christopher Oh
-2017-08-28
+2018-08-28
 
 -   [Motivation](#motivation)
 -   [Challenges](#challenges)
@@ -17,26 +17,21 @@ Christopher Oh
 Motivation
 ----------
 
-The goal is to produce one of the best visualizations on the 2016 presidential election prediction.
+The goal is to reproduce one of the best visualizations on the 2016 US presidential election that correctly predicted how the demographics within each county could be the key in determining the election outcome.
 
-Leveraging the power of the `tidyverse` and `sf` packages, I was able to come close to getting the plot to match the original plot.
+Leveraging the power of the `tidyverse` and `sf` packages, I replicated the map that closely matches the original plot.
 
 Challenges
 ----------
 
-The two biggest hurdles to the project were (not in order):
+The two biggest hurdles to the project were:
 
-1.  Obtaining the right datasets
-2.  Tracing the steps the author took
+-   Obtaining the right datasets
+-   Tracing the steps the author took
 
-The article provided minimal guidance regarding both aspects, so a lot of time was spent on
+The article provided minimal guidance regarding both aspects, so a lot of time and effort was dedicated on rummaging through the internet for the sources and verifying the metrics in each step of the calculation.
 
--   Rummaging through the internet for the sources
--   Numerous trials and errors in calculating the metrics in each step of the way
-
-Due to the difficulty of verifying whether either **1.** or **2.** was conducted correctly, I simply had to proceed with the best guesses (and efforts), in most intermediary steps, which would explain why the final output is not perfectly matched.
-
-Below two sections of the article did provide me with some leads to get started on the process:
+Below two sections of the article provided me with some guidance:
 
 "Sources: Current Population Survey, 2012, Minnesota Population Center, University of Minnesota; Census Bureau American Community Survey; exit polls from Edison/Mitofsky, Voter News Services, Voter Research and Surveys, and The New York Times and CBS News" - Ford Fessenden, NYTimes [1]
 
@@ -51,28 +46,24 @@ Pacakges used
 library(tidyverse)
 ```
 
-    ## -- Attaching packages ----------------------------------------------------------------------- tidyverse 1.2.1 --
+    ## -- Attaching packages --------------------------------------------------------------------------- tidyverse 1.2.1.9000 --
 
-    ## √ ggplot2 2.2.1.9000     √ purrr   0.2.4     
-    ## √ tibble  1.3.4          √ dplyr   0.7.4     
-    ## √ tidyr   0.7.2          √ stringr 1.2.0     
-    ## √ readr   1.1.1          √ forcats 0.2.0
+    ## √ ggplot2 3.0.0.9000     √ purrr   0.2.5     
+    ## √ tibble  1.4.2          √ dplyr   0.7.5     
+    ## √ tidyr   0.8.1          √ stringr 1.3.1     
+    ## √ readr   1.1.1          √ forcats 0.3.0
 
-    ## -- Conflicts -------------------------------------------------------------------------- tidyverse_conflicts() --
+    ## -- Conflicts ----------------------------------------------------------------------------------- tidyverse_conflicts() --
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
 ``` r
-library(stringr)
-library(purrr)
 library(sf)
 ```
 
-    ## Linking to GEOS 3.6.1, GDAL 2.2.0, proj.4 4.9.3
+    ## Warning: package 'sf' was built under R version 3.5.1
 
-``` r
-library(forcats)
-```
+    ## Linking to GEOS 3.6.1, GDAL 2.2.3, proj.4 4.9.3
 
 Below are the parameters & functions to be used.
 
