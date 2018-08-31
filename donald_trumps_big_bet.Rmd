@@ -1,7 +1,7 @@
 ---
-title: "NYT Recreation - Donald Trump's Big Bet on Less Educated"
+title: "Donald Trump's Big Bet on Less Educated - NY Times"
 author: "Christopher Oh"
-date: 2017-08-28
+date: 2018-08-28
 output:
   github_document:
     toc: true
@@ -14,33 +14,25 @@ knitr::opts_chunk$set(echo = TRUE, dpi = 400, out.width = "100%")
 
 ## Motivation
 
-The goal is to produce one of the best visualizations on the 2016 presidential
-election prediction.
+The goal is to reproduce one of the best visualizations on the 2016 US presidential
+election that correctly predicted how the demographics within each county could be
+the key in determining the election outcome.
 
-Leveraging the power of the `tidyverse` and `sf` packages, I was able to come
-close to getting the plot to match the original plot.
+Leveraging the power of the `tidyverse` and `sf` packages, I replicated the map that 
+closely matches the original plot.
 
 ## Challenges
 
-The two biggest hurdles to the project were (not in order):
+The two biggest hurdles to the project were:
 
-1. Obtaining the right datasets
-2. Tracing the steps the author took
++ Obtaining the right datasets
++ Tracing the steps the author took
 
 The article provided minimal guidance regarding both aspects, so a lot of time 
-was spent on
+and effort was dedicated on rummaging through the internet for the sources
+and verifying the metrics in each step of the calculation.
 
-+ Rummaging through the internet for the sources
-+ Numerous trials and errors in calculating the metrics in each step of the
-way
-
-Due to the difficulty of verifying whether either __1.__ or __2.__ was
-conducted correctly, I simply had to  proceed with the best guesses (and 
-efforts), in most intermediary steps, which would explain why the final output
-is not perfectly matched.
-
-Below two sections of the article did provide me with some leads to get started
-on the process:
+Below two sections of the article provided me with some guidance:
 
 "Sources: Current Population Survey, 2012, Minnesota Population Center, University of Minnesota; Census Bureau American Community Survey; exit polls from Edison/Mitofsky, Voter News Services, Voter Research and Surveys, and The New York Times and CBS News" - Ford Fessenden, NYTimes [^1]
 
@@ -50,17 +42,17 @@ on the process:
 # File paths
 
 # 2012 CPS November survey data that contains the voting turnout rate information
-path_cps_nov <- "C:/Users/logicalfellac/Downloads/cps_00003.dat/cps_00003_1.csv"
+path_cps_nov <- "C:/Users/logic/Downloads/election_files/cps_00003_1.csv"
 
 # Voting age population data broken down by race
-path_voting_age <- "C:/Users/logicalfellac/Downloads/Spring2017/C01/County.csv"
+path_voting_age <- "C:/Users/logic/Downloads/election_files/County.csv"
 
 # White (not hispanic) population over 25 divided by educational attainment
-path_white_edu <- "C:/Users/logicalfellac/Downloads/Spring2017/C01/ACS_15_5YR_C15002H_with_ann.csv"
+path_white_edu <- "C:/Users/logic/Downloads/election_files/ACS_15_5YR_C15002H_with_ann.csv"
 
 # Geodata
-path_county_geo <- "C:/Users/logicalfellac/Downloads/Spring2017/C01/cb_2015_us_county_20m_sf.rds" 
-path_state_geo <- "C:/Users/logicalfellac/Downloads/Spring2017/C01/cb_2015_us_state_20m_sf.rds"
+path_county_geo <- "C:/Users/logic/Downloads/election_files/cb_2015_us_county_20m_sf.rds" 
+path_state_geo <- "C:/Users/logic/Downloads/election_files/cb_2015_us_state_20m_sf.rds"
 ```
 
 ## Packages, parameters, functions
@@ -69,10 +61,7 @@ Pacakges used
 
 ```{r}
 library(tidyverse)
-library(stringr)
-library(purrr)
 library(sf)
-library(forcats)
 ```
 
 Below are the parameters & functions to be used.
