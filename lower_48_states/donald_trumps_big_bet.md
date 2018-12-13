@@ -1,7 +1,7 @@
 Donald Trump's Big Bet on Less Educated - NY Times
 ================
 Christopher Oh
-2018-08-28
+2018-08-22
 
 -   [Motivation](#motivation)
 -   [Challenges](#challenges)
@@ -46,12 +46,22 @@ Pacakges used
 library(tidyverse)
 ```
 
-    ## -- Attaching packages --------------------------------------------------------------------------- tidyverse 1.2.1.9000 --
+    ## Warning: package 'tidyverse' was built under R version 3.5.1
 
-    ## √ ggplot2 3.0.0.9000     √ purrr   0.2.5     
-    ## √ tibble  1.4.2          √ dplyr   0.7.5     
-    ## √ tidyr   0.8.1          √ stringr 1.3.1     
-    ## √ readr   1.1.1          √ forcats 0.3.0
+    ## -- Attaching packages -------------------------------------------------------------------------------- tidyverse 1.2.1 --
+
+    ## √ ggplot2 3.1.0     √ purrr   0.2.5
+    ## √ tibble  1.4.2     √ dplyr   0.7.8
+    ## √ tidyr   0.8.2     √ stringr 1.3.1
+    ## √ readr   1.2.1     √ forcats 0.3.0
+
+    ## Warning: package 'ggplot2' was built under R version 3.5.1
+
+    ## Warning: package 'tidyr' was built under R version 3.5.1
+
+    ## Warning: package 'readr' was built under R version 3.5.1
+
+    ## Warning: package 'dplyr' was built under R version 3.5.1
 
     ## -- Conflicts ----------------------------------------------------------------------------------- tidyverse_conflicts() --
     ## x dplyr::filter() masks stats::filter()
@@ -63,7 +73,7 @@ library(sf)
 
     ## Warning: package 'sf' was built under R version 3.5.1
 
-    ## Linking to GEOS 3.6.1, GDAL 2.2.3, proj.4 4.9.3
+    ## Linking to GEOS 3.6.1, GDAL 2.2.3, PROJ 4.9.3
 
 Below are the parameters & functions to be used.
 
@@ -155,7 +165,8 @@ Datasets
 -   `voting_age`: Voting age population data for each county in the U.S. from [US Census Bureau - Voting Age Population by Citizenship and Race](https://www.census.gov/rdo/data/voting_age_population_by_citizenship_and_race_cvap.html)
 -   `white_edu`: County-level educational attainment data for 25 or older [American Community Survey (ACS) Educational Attainment Data - White Alone, Not Hispanic or Latino](https://factfinder.census.gov/faces/tableservices/jsf/pages/productview.xhtml?pid=ACS_16_1YR_C15002H&prodType=table)
 
-\*Alaska and Hawaii are excluded to avoid complications with geovisualization.
+\*Alaska and Hawaii are removed.
+
 \*\*The .csv file imported was processed from the raw format (.dat file) using the provided STATA .do file from IPUMS (slightly modified to keep the state FIPS).
 
 ``` r
