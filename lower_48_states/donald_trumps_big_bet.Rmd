@@ -1,7 +1,7 @@
 ---
 title: "Donald Trump's Big Bet on Less Educated - NY Times"
 author: "Christopher Oh"
-date: 2018-12-13
+date: 2018-08-22
 output:
   github_document:
     toc: true
@@ -157,7 +157,8 @@ supplement containing voting information (both from year 2012) - queried from
 + `white_edu`: County-level educational attainment data for 25 or older 
 [American Community Survey (ACS) Educational Attainment Data - White Alone, Not Hispanic or Latino](https://factfinder.census.gov/faces/tableservices/jsf/pages/productview.xhtml?pid=ACS_16_1YR_C15002H&prodType=table)
 
-*Alaska and Hawaii are moved to fit the projection typically used for the lower 48 states.  
+*Alaska and Hawaii are removed.
+
 **The .csv file imported was processed from the raw format (.dat file) using the 
 provided STATA .do file from IPUMS (slightly modified to keep the state FIPS).
 
