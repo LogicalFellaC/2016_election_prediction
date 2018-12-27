@@ -48,7 +48,7 @@ library(tidyverse)
 
     ## Warning: package 'tidyverse' was built under R version 3.5.1
 
-    ## -- Attaching packages --------------------------------------- tidyverse 1.2.1 --
+    ## -- Attaching packages -------------------------------------------------------------------------------- tidyverse 1.2.1 --
 
     ## √ ggplot2 3.1.0     √ purrr   0.2.5
     ## √ tibble  1.4.2     √ dplyr   0.7.8
@@ -63,7 +63,7 @@ library(tidyverse)
 
     ## Warning: package 'dplyr' was built under R version 3.5.1
 
-    ## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+    ## -- Conflicts ----------------------------------------------------------------------------------- tidyverse_conflicts() --
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -298,8 +298,9 @@ Here are the steps:
 
 1.  The entries with invlaid voting record are removed.
 2.  `education` is collapsed into 3 levels: `no_college`, `some_college`, and `college`.
-3.  `hispanic` is collapsed down to 2 levels: `hispanic`, `not_hispanic`. 4.`race` is collpased down to 4 levels: `asian`, `black`, `other`, and `white`.
-4.  Add a new level on `race` for the hispanics and assign everyone into this category regardless of their existing `race` level (i.e. a person's `race` is `hispanic` if the variable `hispanic` is `hispanic`). This is because hispanic is assigned as one of the race groups in the analysis by NY Times.
+3.  `hispanic` is collapsed down to 2 levels: `hispanic`, `not_hispanic`.
+4.  `race` is collpased down to 4 levels: `asian`, `black`, `other`, and `white`.
+5.  Add a new level on `race` for the hispanics and assign everyone into this category regardless of their existing `race` level (i.e. a person's `race` is `hispanic` if the variable `hispanic` is `hispanic`). This is because hispanic is assigned as one of the race groups in the analysis by NY Times.
 
 ``` r
 cps_nov_clean <-
